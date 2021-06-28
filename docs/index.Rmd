@@ -396,6 +396,19 @@ opcoes_dolar <- opcoes_dolar %>% gather(meses,valores, - Date)
 opcoes_dolar$meses <- factor(opcoes_dolar$meses, levels = c("Agosto", "Setembro", "Outubro"))
 
 
+############### Produtos mais exportados em Maio
+
+importacao_produtos_2021 <- read.csv2("importacao_produtos_2021.csv")
+
+exportacao_produtos_2021 <- read.csv2("exportacao_produtos_2021.csv")
+
+
+######### Tabelas
+
+tabela_impor_comex <- read.csv2("tabela_impor_comex.csv")
+tabela_expor_comex <- read.csv2("tabela_expor_comex.csv")
+
+
 ```
 
 
@@ -604,7 +617,7 @@ background-size: contain
 ggplot(txa_cambio, aes(x = date, y = valor)) + 
   geom_line(color = "deepskyblue3", size = 1.1) +
   labs(y="Taxa de câmbio (R$/US$)", x="", fill="",
-       title = "Taxa de câmbio mensal - compra",
+       title = "Taxa de Câmbio",
        caption = "Fonte: Bloomberg | Elaboração: Arazul Research") +
   theme_minimal() +
   theme(legend.position = "none",
@@ -1011,6 +1024,128 @@ knitr::kable(head(tabela_comex_5),
     </div>
   </div>
 </div>
+
+
+---
+
+<br />
+
+<br />
+
+
+#### Produtos mais exportados e importados
+
+<br />
+
+```{r,echo=FALSE, warning=FALSE}
+
+
+# Definindo cores
+colors <- c("Exportação" = "deepskyblue3", "Importação" = "dodgerblue3")
+
+### exportação --------------------------
+
+exp_prod_graph <- ggplot(exportacao_produtos_2021, aes(x = total_bilhoes,  y = reorder(produto, +total_bilhoes))) + 
+  geom_col(fill = "deepskyblue3") + 
+  geom_text(aes(label = paste0("US$ ",format(round(total_bilhoes,2), big.mark = ".", decimal.mark = ",")),
+                hjust = ifelse(total_bilhoes >= 0, -0.5, 1.5)),size = 2,
+            color = 'black',fontface='bold') +
+  scale_x_continuous(labels = scales::dollar_format(prefix = "US$",big.mark = ".", decimal.mark = ","),
+                     breaks = seq(0,10000,2000),
+                     limits = c(0,10000)) + 
+  labs(title = "5 produtos mais exportados no Brasil\n em Maio de 2021 (em milhões de dólares)", y = "", x="US$ (milhões)",
+       caption = paste("Fonte: Comex | Elaboração: Arazul Research")) +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.title.y = element_text(size=8),
+        axis.title.x = element_text(size=8),
+        plot.title = element_text(size=12, hjust = 0.5, face="bold"),
+        plot.caption = element_text(size = 8),
+        axis.text.y = element_text(face="bold", color="#000000",size=6),
+        axis.text.x = element_text(face="bold", color="#000000",size=6)) +
+  theme_xaringan(text_font_size = 10)
+   
+
+
+### importação --------------------------
+
+imp_prod_graph <- ggplot(importacao_produtos_2021, aes(x = total_bilhoes,  y = reorder(produto, +total_bilhoes))) + 
+  geom_col(fill = "deepskyblue3") + 
+  geom_text(aes(label = paste0("US$ ",format(round(total_bilhoes,2), big.mark = ".", decimal.mark = ",")),
+                hjust = ifelse(total_bilhoes >= 0, -0.5, 1.5)),size = 2,
+            color = 'black',fontface='bold') +
+  scale_x_continuous(labels = scales::dollar_format(prefix = "US$",big.mark = ".", decimal.mark = ","),
+                     breaks = seq(0,1250,350),
+                     limits = c(0,1250)) +
+  labs(title = "5 produtos mais importados no Brasil\n em Maio de 2021 (em milhões de dólares)", y = "", x="US$ (milhões)",
+       caption = paste("Fonte: Comex | Elaboração: Arazul Research")) +
+  theme_minimal() +
+  theme(legend.position = "bottom",
+        axis.title.y = element_text(size=8),
+        axis.title.x = element_text(size=8),
+        plot.title = element_text(size=12, hjust = 0.5, face="bold"),
+        plot.caption = element_text(size = 8),
+        axis.text.y = element_text(face="bold", color="#000000",size=6),
+        axis.text.x = element_text(face="bold", color="#000000",size=6)) +
+  theme_xaringan(text_font_size = 10)
+  
+
+
+gridExtra::grid.arrange(exp_prod_graph, imp_prod_graph, ncol = 2)
+
+
+```
+
+
+---
+
+<br />
+
+<br />
+
+#### Produtos mais exportados no mês
+
+<br />
+
+```{r,echo=FALSE, warning=FALSE}
+
+knitr::kable(head(tabela_expor_comex),
+             format = 'html',
+             align = "c",
+             col.names = c("Produto",
+                           "Valor exportado em Maio/21 (em milhões US$)",
+                           "Variação (12 meses)",
+                           "Variação (1 mês)"),
+             caption = "Referência: Junho/2021")
+
+
+
+```
+    </div>
+  </div>
+</div>
+
+---
+
+<br />
+
+<br />
+
+
+#### Produtos mais importados no mês
+
+<br />
+
+```{r echo=FALSE, warning=FALSE}
+knitr::kable(head(tabela_impor_comex),
+             format = 'html',
+             align = "c",
+             col.names = c("Produto",
+                           "Valor importado em Maio/21 (em milhões US$)",
+                           "Variação (12 meses)",
+                           "Variação (1 mês)"),
+             caption = "Referência: Junho/2021")
+```
 
 
 ---
